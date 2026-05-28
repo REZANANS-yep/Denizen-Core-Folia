@@ -1,3 +1,12 @@
+> ## ⚠️ Folia fork - EXPERIMENTAL, NOT FOR PRODUCTION
+>
+> This is an **unofficial fork** of [DenizenScript/Denizen-Core](https://github.com/DenizenScript/Denizen-Core) that
+> adapts the engine for a **[Folia](https://github.com/PaperMC/Folia)** build of Denizen (Minecraft 1.21.11). Branch: `folia`.
+> The only engine change is making the "main thread" check delegate to the implementation (so Folia's global region tick
+> can act as the single logical engine thread). Pair with the matching Denizen Folia fork.
+>
+> **Do NOT use on a production server.** Experimental, work-in-progress, not endorsed by the DenizenScript team.
+
 DenizenCore
 ===========
 
