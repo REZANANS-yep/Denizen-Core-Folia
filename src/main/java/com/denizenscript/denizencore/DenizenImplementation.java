@@ -103,4 +103,17 @@ public interface DenizenImplementation {
     VectorObject getVector(double x, double y, double z);
 
     VectorObject vectorize(ObjectTag input, TagContext context);
+
+    /**
+     * Returns true if the current thread is the one DenizenCore should treat as its single synchronous "main" thread
+     * (the thread that drives {@link DenizenCore#tick(int)} and on which all script queues execute serially).
+     * <p>
+     * The default implementation compares against the thread captured at {@link DenizenCore#init} time, which is correct
+     * for classic single-main-thread servers. Regionized/multithreaded platforms (e.g. Folia, where the global region
+     * tick is not guaranteed to be a stable thread) must override this to consult the platform's own check
+     * (e.g. {@code Bukkit.isGlobalTickThread()}).
+     */
+    default boolean isDenizenMainThread() {
+        return Thread.currentThread().equals(DenizenCore.MAIN_THREAD);
+    }
 }

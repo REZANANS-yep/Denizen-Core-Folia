@@ -158,6 +158,10 @@ public class DenizenCore {
      * Call to save anything that needs to be saved, especially before shutdown.
      */
     public static void saveAll(boolean lockUntilDone) {
+        if (serverFlagMap == null) {
+            // init never completed (e.g. enable failed early); nothing to save.
+            return;
+        }
         NoteManager.save(lockUntilDone);
         serverFlagMap.saveToFile(new File(implementation.getDataFolder(), "server_flags").getPath(), lockUntilDone);
     }
@@ -247,10 +251,16 @@ public class DenizenCore {
         }
     }
 
-    /** Returns true if called from the thread that DenizenCore understands to be the main thread, or false if on a different thread. */
+    /** Returns true if called from the thread that DenizenCore understands to be the main thread, or false if on a different thread.
+     * The main-thread determination is delegated to the active implementation (see {@link DenizenImplementation#isDenizenMainThread()})
+     * so that regionized platforms like Folia can substitute their own check (e.g. global-region tick thread) instead of a fixed thread identity.
+     * The TagManager off-thread tag-parsing thread is always also accepted. */
     public static boolean isMainThread() {
         Thread curThread = Thread.currentThread();
-        return curThread.equals(MAIN_THREAD) || curThread.equals(TagManager.tagThread);
+        if (curThread.equals(TagManager.tagThread)) {
+            return true;
+        }
+        return implementation != null ? implementation.isDenizenMainThread() : curThread.equals(MAIN_THREAD);
     }
 
     /** Runs the task immediately if called on main thread, or later if called off-thread. */
